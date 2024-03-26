@@ -1,0 +1,150 @@
+README Parallel Betweenness Centrality
+Copyright 2023, Robert Ryan McCune <robertryanmccune@gmail.com>
+
+1.	ABOUT BETWEENNESS CENTRALITY
+
+A graph, or network, is a collection of nodes and edges
+used to represent relationships in a system.
+Betweenness Centrality (BC) is a measure of
+a node's importance in a network.  BC computes
+how many shortest paths in a network pass through a 
+given node.  This program implements the Brandes algorithm
+that uses a propogation "trick" for faster runtime.
+Betweenness values are computed for all nodes.
+OpenMP is utilized to run the program in parallel.
+
+For more information on betweenness, see:
+https://en.wikipedia.org/wiki/Betwenness_centrality
+
+For more info on the Brandes betweenness algorithm 
+implemented here, see:
+
+U. Brandes. A faster algorithm for betweenness centrality. 
+Journal of Mathematical Sociology, 2001.
+ 
+2.	CONTENTS
+
+The contents of this package are as follows:
+
+	README - this directions file
+	LICENSE - The BSD license for this software
+	Makefile - commands for compilation	
+	betweenness.cpp - the main program
+	sample.adjacency_list - a graph in the adjacency list format
+	sample.edge_list - a graph in the edgelist format
+	graph/ - the folder containing the graph class
+	dynamic_array/ - the folder containing the custom
+		dynamic_array (vector) class
+	priority_queue/ - the folder containing the
+		custom priority_queue class
+	utility/ - the folder containing the program to 
+		convert a graph in the edgelist form
+		to the adjacency list form
+
+2.  COMPILATION
+
+To compile, from the home directory, type:
+
+  make all
+
+to create an executable 'betweenness',
+as well as an executable in the utility folder
+called 'edgelist_to_adjlist'
+
+The program was compiled with 
+GCC 4.4.7, Make 3.81, and OpenMP 3.1
+
+Enter:
+
+	make clean
+
+to remove all executables
+
+
+3.  SET PARALLEL THREADS
+
+To set the number of threads used for parallelization,
+in the shell, set the OMP_NUM_THREADS variable to 
+the number of desired threads, e.g.:
+
+	export OMP_NUM_THREADS=2
+
+then run the executable like in step 3 below.
+During execution, the program will print out
+the number of threads available for execution
+
+
+4.  RUNNING THE PROGRAM
+
+To run the executable, from the main directory type:
+
+	./betweenness  [ingraph]  [outfile]
+
+the [ingraph] argument is an adjacency list,
+space de-limitted, with nodes labelled 0 to n-1.
+The adjacency list is sorted, both by index,
+as well as within each row.  Graphs are undirected,
+so each edge is listed twice in each direction.
+Edges are unweighted.  A sample graphs are 
+provided in the graphs/ directory.
+
+the [outfile] argument is the name of the
+text file to be generated with the results.
+The betweenness values are written for
+each node in sorted order beginning with 0
+
+5.	Graph Formatting
+
+The betweenness program accepts graphs in the 
+adjacency list format, an example is provided
+in sample.adjacency_list   
+
+Commonly, publicly available network datasets 
+and graph generators, such as those hosted
+by SNAP (snap.stanford.edu)
+store graphs in the edgelist format.
+the same example graph is provided in the 
+edgelist format in sample.edge_list 
+
+A utility program is provided that converts
+edge_list graphs to adjacency_list graphs
+
+The conversion of edgelists to adjacency lists
+is separate from the main program because 
+the conversion program makes heavy use of 
+stl containers like vectors, maps, and sets,
+whereas betweenness and its accompanying files
+don't use any stl containers
+
+Executing:
+
+  make all 
+
+from the main directory will compile 
+an executable into the utility folder.
+Execute the program with an edgelist as
+parameter 1 and the adjacency_list outfile
+as paramter 2:
+
+	./edgelist_to_adjlist [edgelist_in] [adjacencylist_out]
+
+6.  NOTES
+
+There are no memory leaks with the betweenness 
+and associated programs. The program was run 
+serially with no leaks
+
+Valgrind may report memory still reachable when
+betweenness is compiled and run with OpenMP
+
+First, this is not a memory leak as no memory is lost.
+
+Second, this is from the OpenMP library, not this program, 
+and is apparently a well-known issue.
+
+Running the code serially and without OpenMP
+can eliminate the 'still reachable' warning.  
+To do so, remove the '-fopenmp' flag from the 
+compilation command in the Makefile, and 
+comment out the "treading info" lines 62-67
+in the betweenness.cpp code, then run as normal.
