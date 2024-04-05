@@ -116,6 +116,16 @@ stl containers like vectors, maps, and sets,
 whereas betweenness and its accompanying files
 don't use any stl containers
 
+The input graphs are assumed to be undirected.
+The graph generator from SNAP generates 
+undirected graphs, but edges are only listed 
+once, e.g.  the edge pair 0 1 is listed,
+whereas edge 1 0 is not.  The adjacency list
+here that is created by the utility program
+takes graphs from the SNAP generator and then
+lists edges in both directions for the 
+adjacency list.
+
 Executing:
 
   make all 
